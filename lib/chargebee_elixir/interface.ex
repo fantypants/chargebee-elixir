@@ -1,5 +1,5 @@
 defmodule ChargebeeElixir.Interface do
-
+  @validMessages ["No changes are scheduled for this subscription."]
   def get(path) do
     get(path, %{})
   end
@@ -33,12 +33,16 @@ defmodule ChargebeeElixir.Interface do
       |> Jason.decode!
   end
 
+  defp handle_possible_exception(message) when message in @validMessages do message end
+  defp handle_possible_exception(message), do: raise ChargebeeElixir.InvalidRequestError, message: message
   defp handle_response(%{body: body, status_code: 400}) do
     message = body
       |> Jason.decode!
       |> Map.get("message")
-    raise ChargebeeElixir.InvalidRequestError, message: message
+      raise ChargebeeElixir.InvalidRequestError, message: message
+
   end
+
 
   defp handle_response(%{status_code: 401}) do
     raise ChargebeeElixir.UnauthorizedError

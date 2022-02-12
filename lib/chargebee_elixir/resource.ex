@@ -5,6 +5,22 @@ defmodule ChargebeeElixir.Resource do
 
       @resource unquote(resource)
 
+      def retrieve(id, path) do
+        "#{resource_path(id)}#{path}" |> IO.inspect
+        Interface.get("#{resource_path(id)}#{path}") |> IO.inspect
+        Interface.get("#{resource_path(id)}#{path}")[@resource]
+      rescue
+        e in ChargebeeElixir.NotFoundError -> nil
+        f in ChargebeeElixir.InvalidRequestError -> nil
+      end
+
+      def retrieve_estimate(id, path) do
+        Interface.get("#{resource_path(id)}#{path}")
+      rescue
+        e in ChargebeeElixir.NotFoundError -> nil
+        f in ChargebeeElixir.InvalidRequestError -> nil
+      end
+
       def retrieve(id) do
         Interface.get(resource_path(id))[@resource]
       rescue
@@ -26,6 +42,16 @@ defmodule ChargebeeElixir.Resource do
 
       def create(params, path \\ "") do
         Interface.post("#{resource_base_path()}#{path}", params)[@resource]
+      end
+
+      def update(id, params, path \\ "") do
+        Interface.post("#{resource_path(id)}#{path}", params)[@resource]
+      rescue
+        e in ChargebeeElixir.NotFoundError -> nil
+      end
+
+      def post_endpoint(id, endpoint, params, return_arg) do
+        Interface.post("#{resource_path(id)}#{endpoint}", params)[return_arg]
       end
 
       def post_endpoint(id, endpoint, params) do
