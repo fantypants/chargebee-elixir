@@ -1,4 +1,5 @@
 defmodule ChargebeeElixir.Interface do
+  require Logger
   @validMessages ["No changes are scheduled for this subscription."]
   def get(path) do
     get(path, %{})
@@ -17,6 +18,9 @@ defmodule ChargebeeElixir.Interface do
   end
 
   def post(path, data) do
+
+    Logger.warn "POSTING CHARGEBEE"
+
     body = data
       |> transform_arrays_for_chargebee
       |> Plug.Conn.Query.encode()
