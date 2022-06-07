@@ -25,6 +25,7 @@ defmodule ChargebeeElixir.Interface do
       body,
       headers() ++ [{"Content-Type", "application/x-www-form-urlencoded"}]
     )
+    |> IO.inspect
       |> handle_response()
   end
 
