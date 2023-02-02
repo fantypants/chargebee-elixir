@@ -19,7 +19,6 @@ defmodule ChargebeeElixir.Interface do
 
   def post(path, data) do
 
-    Logger.warn "POSTING CHARGEBEE"
 
     body = data
       |> transform_arrays_for_chargebee
@@ -29,13 +28,14 @@ defmodule ChargebeeElixir.Interface do
       body,
       headers() ++ [{"Content-Type", "application/x-www-form-urlencoded"}]
     )
-    |> IO.inspect
       |> handle_response()
   end
 
   defp handle_response(%{body: body, status_code: 200}) do
     body
-      |> Jason.decode!
+    |> IO.inspect
+    |> Jason.decode!
+    |> IO.inspect
   end
 
   defp handle_possible_exception(message) when message in @validMessages do message end
@@ -67,7 +67,7 @@ defmodule ChargebeeElixir.Interface do
 
   defp fullpath(path) do
     namespace = Application.get_env(:chargebee_elixir, :namespace)
-    "https://#{namespace}.chargebee.com/api/v2#{path}"
+    "https://#{namespace}.chargebee.com/api/v2#{path}" |> IO.inspect
   end
 
   defp headers() do
@@ -78,6 +78,7 @@ defmodule ChargebeeElixir.Interface do
   end
 
   def transform_arrays_for_chargebee(data) do
+
     case data do
       map_data when is_map(map_data) ->
         map_data

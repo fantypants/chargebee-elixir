@@ -44,8 +44,12 @@ defmodule ChargebeeElixir.Resource do
         Interface.post("#{resource_base_path()}#{path}", params)[@resource]
       end
 
-      def update(id, params, path \\ "") do
-        Interface.post("#{resource_path(id)}#{path}", params)[@resource]
+      def update(id, params, opts \\ [path: "", return_all_fields: false]) do
+        if(opts[:return_all_fields])do
+          Interface.post("#{resource_path(id)}#{opts[:path]}", params)
+        else
+          Interface.post("#{resource_path(id)}#{opts[:path]}", params)[@resource]
+        end
       rescue
         e in ChargebeeElixir.NotFoundError -> nil
       end
